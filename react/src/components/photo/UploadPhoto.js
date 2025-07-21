@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Button, Card, Alert, Typography, Input, Select } from 'antd';
+import { Upload, Button, Card, Alert, Typography, Input, Select, Image } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { instance } from '../../api/axios';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 const UploadPhoto = () => {
@@ -16,6 +16,7 @@ const UploadPhoto = () => {
   const [genderPreference, setGenderPreference] = useState('any');
   const [ageMin, setAgeMin] = useState(18);
   const [ageMax, setAgeMax] = useState(99);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ['user'],
@@ -36,6 +37,16 @@ const UploadPhoto = () => {
 
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.slice(-1)); // Оставляем только последнее загруженное фото
+    if (fileList.length > 0) {
+      const file = fileList[0].originFileObj;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(null);
+    }
   };
 
   const handleSubmit = () => {
@@ -133,6 +144,16 @@ const UploadPhoto = () => {
             Выбрать фото
           </Button>
         </Upload>
+        {previewImage && (
+          <div style={{ marginTop: 16, textAlign: 'center' }}>
+            <Text style={{ marginBottom: 8, display: 'block' }}>Предпросмотр:</Text>
+            <Image
+              src={previewImage}
+              alt="Предпросмотр"
+              style={{ maxHeight: 200, maxWidth: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        )}
         <Button
           type="primary"
           onClick={handleSubmit}
