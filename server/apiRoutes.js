@@ -6,10 +6,10 @@ const photoController = require('./controllers/photoController');
 const router = express.Router();
 
 // Auth Routes
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/forgot-password', authController.forgotPassword);
-router.post('/reset-password', authController.resetPassword);
+router.post('/auth/register', authController.register);
+router.post('/auth/login', authController.login);
+router.post('/auth/forgot-password', authController.forgotPassword);
+router.post('/auth/reset-password', authController.resetPassword);
 
 // Photo Routes
 router.post('/photos', authMiddleware, photoController.uploadPhoto);
