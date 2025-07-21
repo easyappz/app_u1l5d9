@@ -1,31 +1,28 @@
 const express = require('express');
-
-/**
- * Пример создания модели в базу данных
- */
-// const mongoose = require('mongoose');
-// const db = require('/db');
-
-// const MongoTestSchema = new mongoose.Schema({
-//   value: { type: String, required: true },
-// });
-
-// const MongoModelTest = db.mongoDb.model('Test', MongoTestSchema);
-
-// const newTest = new MongoModelTest({
-//   value: 'test-value',
-// });
-
-// newTest.save();
+const authMiddleware = require('./middleware/auth');
+const authController = require('./controllers/authController');
+const photoController = require('./controllers/photoController');
 
 const router = express.Router();
 
-// GET /api/hello
+// Auth Routes
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
+
+// Photo Routes
+router.post('/photos', authMiddleware, photoController.uploadPhoto);
+router.patch('/photos/:photoId/toggle', authMiddleware, photoController.togglePhotoStatus);
+router.get('/photos/random', authMiddleware, photoController.getRandomPhoto);
+router.post('/photos/:photoId/rate', authMiddleware, photoController.ratePhoto);
+router.get('/photos/my', authMiddleware, photoController.getUserPhotos);
+
+// Default Routes
 router.get('/hello', (req, res) => {
   res.json({ message: 'Hello from API!' });
 });
 
-// GET /api/status
 router.get('/status', (req, res) => {
   res.json({ 
     status: 'ok',
@@ -34,4 +31,3 @@ router.get('/status', (req, res) => {
 });
 
 module.exports = router;
-
