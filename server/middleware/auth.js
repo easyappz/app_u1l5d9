@@ -1,18 +1,19 @@
-const { verifyToken } = require('../utils/auth');
+const jwt = require('jsonwebtoken');
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+const JWT_SECRET = 'my-secret-key-123';
 
+module.exports = async (req, res, next) => {
   try {
-    const decoded = verifyToken(token);
-    req.userId = decoded.id;
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+
+    if (!token) {
+      throw new Error('Authentication failed: No token provided');
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Invalid token' });
+    res.status(401).json({ error: 'Authentication failed: Invalid token' });
   }
 };
-
-module.exports = authMiddleware;

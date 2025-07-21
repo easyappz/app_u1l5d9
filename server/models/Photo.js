@@ -1,20 +1,32 @@
 const mongoose = require('mongoose');
-const db = require('../db');
 
-const PhotoSchema = new mongoose.Schema({
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  url: { type: String, required: true },
-  isActive: { type: Boolean, default: false },
-  ratings: [
-    {
-      rater: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      score: { type: Number, required: true },
-      raterGender: { type: String, enum: ['male', 'female', 'other'] },
-      raterAge: { type: Number }
-    }
-  ]
+const photoSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true
+  },
+  filename: {
+    type: String,
+    required: true
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  uploadDate: {
+    type: Date,
+    default: Date.now
+  },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    default: 'active'
+  },
+  rating: {
+    type: Number,
+    default: 0
+  }
 });
 
-const Photo = db.mongoDb.model('Photo', PhotoSchema);
-
-module.exports = Photo;
+module.exports = mongoose.model('Photo', photoSchema);
